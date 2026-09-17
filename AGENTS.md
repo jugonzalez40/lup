@@ -59,18 +59,47 @@ npm run lint && npm run build
 
 Ambos tienen que pasar. No se despliega con el build roto.
 
-## Skills instaladas
+## Skills — invócalas, no basta con tenerlas
 
-Viven en `.claude/skills/`, vienen de `vercel-labs/agent-skills`:
+Viven en `.claude/skills/`, vienen de `vercel-labs/agent-skills`. La calidad del
+resultado depende de que se **invoquen** en el momento correcto:
 
-- `deploy-to-vercel` — desplegar y devolver el link.
-- `web-design-guidelines` — auditar la UI (accesibilidad, contraste, semántica).
-- `vercel-react-best-practices` — patrones de performance de React/Next.
-- `vercel-cli-with-tokens` — deploy vía CLI con token, sin login interactivo.
+| Skill | Invocar cuando | Aporta |
+|---|---|---|
+| `vercel-react-best-practices` | Escribes o refactorizas componentes | 70 reglas de performance React/Next |
+| `web-design-guidelines` | Terminaste de escribir, antes del build | Accesibilidad, contraste, focus, semántica |
+| `deploy-to-vercel` | Vas a publicar | Deploy correcto y link |
+| `vercel-cli-with-tokens` | El login por navegador falló | Deploy con token |
+
+Si falta alguna:
+
+```bash
+npx skills add vercel-labs/agent-skills \
+  --skill deploy-to-vercel web-design-guidelines vercel-cli-with-tokens vercel-react-best-practices \
+  --agent claude-code --copy -y
+```
 
 Se actualizan con `npx skills update`.
 
+## El diseño es incremental
+
+`.portfolio/design.json` es el snapshot de qué se construyó y desde qué diseño:
+URL, secciones → archivo, tokens, copy, y los ajustes manuales pedidos fuera del
+diseño (`manualEdits`).
+
+Cuando el diseño cambie, **no reconstruyas**: trae el diseño, compáralo contra el
+snapshot y aplica solo la diferencia.
+
+- Cambio de color → una línea en `globals.css`, no un refactor.
+- Sección sin cambios → no la abras, ni para reformatear.
+- El diseño cambia una sección con un `manualEdit` registrado → **para y
+  pregunta** cuál gana. Nunca pises un ajuste manual en silencio.
+- Sección eliminada del diseño → confirma antes de borrarla.
+
+Después de aplicar cambios, actualiza el snapshot.
+
 ## Comando principal
 
-`/portfolio <url-del-diseño>` — construye el portafolio desde un diseño de Claude
-Design y lo despliega. Definido en `.claude/commands/portfolio.md`.
+`/portfolio [url-del-diseño]` — construye el portafolio desde un diseño de Claude
+Design y lo publica; en corridas posteriores actualiza solo lo que cambió.
+Definido en `.claude/commands/portfolio.md`.
