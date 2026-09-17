@@ -5,27 +5,30 @@ Portafolio personal. El diseño se hace en **Claude Design**, el código lo gene
 
 ## Cómo se usa
 
-Abre Claude Code en esta carpeta y corre:
+Abre Claude Code en esta carpeta y escribe:
 
 ```
-/portfolio <url-del-diseño-de-claude-design>
+/portfolio
 ```
 
-Eso es todo lo que hay que escribir. El comando no pregunta nada más: lee el
-diseño desde la URL, lo implementa en React, audita la UI, verifica el build y
-lo despliega a Vercel devolviendo el link.
+Eso es todo. A partir de ahí Claude va pidiendo lo que necesita, de a una cosa
+a la vez, y va haciendo el resto: lo primero que pregunta es el link del diseño.
 
-Si corres `/portfolio` sin URL, lo único que va a preguntar es la URL.
+Si ya tienes el link a mano, puedes pasarlo directo: `/portfolio <url>`.
 
-### Qué hace por dentro
+### Qué pasa, paso a paso
 
-| Paso | Qué pasa |
-|---|---|
-| 1 | Lee el diseño desde la URL de Claude Design y extrae secciones, paleta, tipografías y copy |
-| 2 | Implementa cada sección como un componente en `src/components/` |
-| 3 | Audita la UI con `web-design-guidelines` y corrige accesibilidad/contraste/semántica |
-| 4 | Corre `npm run lint && npm run build` y arregla lo que falle |
-| 5 | Despliega a Vercel como preview y devuelve el link |
+| Paso | Qué hace | Te pregunta |
+|---|---|---|
+| 1 | — | El link de tu diseño de Claude Design |
+| 2 | Lee el diseño: secciones, colores, tipografías, textos | — |
+| 3 | Construye cada sección como componente React | Solo lo que falte en el diseño (tu email, tu GitHub…) |
+| 4 | Audita accesibilidad y contraste, y verifica que compila | — |
+| 5 | Levanta la página en local para que la veas | Qué quieres ajustar antes de publicar |
+| 6 | Publica en Vercel | Tu cuenta de Vercel (te abre el navegador para entrar) |
+| 7 | — | Si quieres conectar un dominio propio |
+
+Solo se detiene a esperarte en los pasos 5 y 6; el resto lo hace de corrido.
 
 El comando está definido en `.claude/commands/portfolio.md` — se puede editar ahí.
 

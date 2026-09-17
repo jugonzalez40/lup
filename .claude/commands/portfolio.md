@@ -1,80 +1,157 @@
 ---
-description: Construye el portafolio a partir de un diseño de Claude Design y lo despliega en Vercel
-argument-hint: <url-del-diseño-de-claude-design>
-allowed-tools: WebFetch, Read, Write, Edit, Glob, Grep, Bash, Skill
+description: Construye el portafolio paso a paso desde un diseño de Claude Design y lo publica
+argument-hint: [url-del-diseño-de-claude-design]
+allowed-tools: WebFetch, Read, Write, Edit, Glob, Grep, Bash, Skill, AskUserQuestion
 ---
 
-# Construir portafolio desde un diseño de Claude Design
+# Construir el portafolio, paso a paso
 
-URL del diseño: $ARGUMENTS
+URL del diseño (puede venir vacía): $ARGUMENTS
 
-## Paso 0 — Conseguir la URL
+## Cómo conducir esto
 
-Si `$ARGUMENTS` está vacío, pregunta **únicamente** esto y no avances hasta tenerla:
+La persona del otro lado **no es técnica**. Condúcela tú.
 
-> Pásame la URL del diseño de Claude Design.
+- **Una sola pregunta a la vez.** Nunca sueltes una lista de preguntas.
+- **Pregunta solo lo que no puedas averiguar tú.** El stack, la estructura y las
+  convenciones ya están decididos en `AGENTS.md`: no los consultes.
+- **Sin jerga.** Di "la página" y no "el bundle"; "se ve bien en celular" y no
+  "el breakpoint responsive".
+- **Avanza tú.** Después de cada paso, sigue al siguiente sin pedir permiso.
+  Solo párate en los checkpoints marcados abajo.
+- **Cuenta qué estás haciendo** en una línea antes de cada paso, para que no
+  se quede mirando una pantalla quieta.
 
-No preguntes nada más: ni framework, ni colores, ni secciones, ni nombre de dominio.
-Todo lo demás se deduce del diseño o ya está decidido en `CLAUDE.md`.
+## Paso 1 — La URL del diseño
 
-## Paso 1 — Leer el diseño
+Si `$ARGUMENTS` trae la URL, úsala y no preguntes nada.
 
-Usa `WebFetch` sobre la URL para extraer el diseño. Las URLs de Claude Design
-(`claude.ai/artifact/…`, `claude.ai/code/artifact/…`, `preview.claude.ai/…`) son
-accesibles con `WebFetch` — no uses `curl` ni un navegador headless, devuelven el
-shell de la SPA o un 403, no el contenido.
+Si viene vacía, pregunta **solo esto**:
 
-Extrae y anota antes de escribir código:
+> ¡Hola! Vamos a montar tu portafolio. Pásame el link de tu diseño de Claude Design.
 
-- Secciones y su orden (hero, sobre mí, proyectos, experiencia, contacto…).
-- Paleta de colores exacta, en hex.
-- Tipografías, tamaños, pesos y escala de espaciado.
-- Textos y copy reales del diseño.
-- Componentes repetidos (tarjeta de proyecto, ítem de timeline, chip de skill…).
-- Comportamiento responsive y estados hover/focus si el diseño los muestra.
+No preguntes nada más en este punto. Ni framework, ni colores, ni secciones.
 
-Si la URL no carga o el contenido no parece un diseño, dilo y pide la URL correcta.
-No inventes un diseño.
+## Paso 2 — Leer el diseño
 
-## Paso 2 — Implementar en React
+Usa `WebFetch` sobre la URL. Las URLs de Claude Design (`claude.ai/artifact/…`,
+`claude.ai/code/artifact/…`, `preview.claude.ai/…`) se leen con `WebFetch` — no
+uses `curl` ni un navegador headless, devuelven el shell de la SPA o un 403.
 
-Stack ya definido en `CLAUDE.md`: Next.js (App Router) + TypeScript + Tailwind.
+Extrae antes de escribir una sola línea de código:
+
+- Secciones y su orden (hero, sobre mí, proyectos, contacto…).
+- Paleta de colores en hex.
+- Tipografías, tamaños, pesos, escala de espaciado.
+- El copy real del diseño.
+- Componentes que se repiten (tarjeta de proyecto, ítem de timeline, chip…).
+- Estados hover/focus y comportamiento responsive, si el diseño los muestra.
+
+Si la URL no carga o no parece un diseño, dilo claro y pide el link correcto.
+**Nunca inventes un diseño.**
+
+**Checkpoint:** cuéntale en lenguaje simple qué encontraste —"veo cinco
+secciones: portada, sobre ti, proyectos, experiencia y contacto"— y sigue
+derecho. No pidas aprobación aquí.
+
+## Paso 3 — Construir
+
+Stack ya definido en `AGENTS.md`: Next.js (App Router) + TypeScript + Tailwind.
 
 - Un componente por sección en `src/components/`, compuestos en `src/app/page.tsx`.
-- Los colores y tipografías del diseño van como tokens en `src/app/globals.css`,
-  nunca hardcodeados por toda la app.
-- Server Components por defecto; `"use client"` solo donde haya interactividad real.
-- Imágenes con `next/image`, fuentes con `next/font`.
+- Colores y tipografías como tokens en `src/app/globals.css`, nunca hex sueltos.
+- Server Components por defecto; `"use client"` solo con interactividad real.
+- `next/image` para imágenes, `next/font` para fuentes.
 - Fidelidad al diseño primero: respeta espaciados, jerarquía y copy tal cual.
 
 Invoca la skill `vercel-react-best-practices` mientras escribes los componentes.
 
-## Paso 3 — Revisar la UI
+Si al diseño le falta algo que el sitio necesita de verdad (el email de contacto,
+el link a su GitHub o LinkedIn, el CV), **pregúntalo en ese momento, de a uno**,
+y sigue. No lo inventes ni pongas placeholders tipo `tu@email.com`.
+
+## Paso 4 — Revisar
 
 Invoca la skill `web-design-guidelines` sobre `src/` y corrige lo que reporte
-(accesibilidad, focus states, contraste, semántica, jerarquía de headings).
+(accesibilidad, contraste, focus states, semántica, jerarquía de headings).
 
-Luego verifica que compila y que no hay errores de lint:
+Verifica que compila:
 
 ```bash
 npm run lint && npm run build
 ```
 
-Arregla lo que salga antes de seguir. No despliegues con el build roto.
+Arregla lo que salga. **No sigas con el build roto.**
 
-## Paso 4 — Desplegar a Vercel
+## Paso 5 — Que lo vea
 
-Invoca la skill `deploy-to-vercel`. Despliega como **preview** y entrega el link.
-Solo despliega a producción si te lo piden explícitamente.
+Levanta `npm run dev` y dale el link local (`http://localhost:3000`).
 
-Si no hay sesión interactiva de Vercel disponible, usa la skill
-`vercel-cli-with-tokens` con `VERCEL_TOKEN`.
+**Checkpoint — aquí sí párate.** Pregúntale:
 
-## Paso 5 — Reportar
+> Ya está armada, ábrela en http://localhost:3000. ¿Qué te gustaría ajustar antes de publicarla?
 
-Cierra con:
+Aplica los cambios que pida, uno por uno, y vuelve a preguntar hasta que diga
+que está conforme. **No despliegues sin su visto bueno.**
 
-- El link del deploy.
-- Las secciones que se construyeron.
-- Lo que `web-design-guidelines` reportó y cómo quedó.
-- Los pasos para conectar el dominio propio (ver `README.md`), si aún no está conectado.
+## Paso 6 — Publicar
+
+Invoca la skill `deploy-to-vercel`. Preview primero; producción solo cuando
+ella lo confirme.
+
+### La cuenta de Vercel
+
+Primero revisa si ya hay sesión:
+
+```bash
+vercel whoami
+```
+
+Si **ya hay sesión**, sigue sin molestarla.
+
+Si **no hay sesión**, explícale en una línea qué es Vercel antes de pedirle nada:
+
+> Para publicarla necesitas una cuenta en Vercel — es el servicio donde va a vivir
+> tu página, es gratis para portafolios. Puedes entrar con tu cuenta de GitHub,
+> Google o tu email.
+
+Luego corre:
+
+```bash
+vercel login
+```
+
+Eso **le abre el navegador** para que confirme. Dile explícitamente que se le va
+a abrir una pestaña y que vuelva a la terminal cuando termine. Espera a que
+confirme que ya lo hizo; no sigas mientras tanto.
+
+Si el login por navegador no funciona (terminal sin sesión interactiva), cae a
+la skill `vercel-cli-with-tokens`: guíala para generar un token en
+`vercel.com/account/tokens` y úsalo como `VERCEL_TOKEN`. Que lo pegue como
+variable de entorno — **nunca lo escribas en un archivo del repo**.
+
+### Después del deploy
+
+Entrégale el link y dile que ya está en internet.
+
+## Paso 7 — El dominio
+
+Pregunta:
+
+> ¿Quieres usar un dominio propio (tunombre.com) o te sirve el link de Vercel por ahora?
+
+Si dice que sí, guíala con los pasos de `README.md` → *Publicar en un dominio
+propio*: comprar el dominio, agregarlo en Vercel, y los registros DNS. Dale los
+valores exactos que muestre el panel de Vercel, uno a uno, y confirma que cada
+paso le funcionó antes de pasar al siguiente.
+
+Si dice que no, cierra ahí: el link de Vercel ya sirve y el dominio se puede
+conectar cuando quiera.
+
+## Al cerrar
+
+Dile en lenguaje simple:
+
+- El link donde quedó publicada.
+- Que para cambiar algo solo tiene que abrir Claude Code en la carpeta y pedirlo.
+- Que cada cambio se vuelve a publicar solo con pedírtelo.
