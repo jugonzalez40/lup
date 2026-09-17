@@ -3,6 +3,10 @@
 Portafolio personal. El diseño se hace en **Claude Design**, el código lo genera
 **Claude Code** a partir de ese diseño, y se publica en **Vercel**.
 
+> ### ¿Eres diseñador/a y no programas?
+> Este README es la parte técnica. Tu guía es **[EMPEZAR-AQUI.md](./EMPEZAR-AQUI.md)** —
+> 3 pasos, sin términos técnicos.
+
 ## Cómo se usa
 
 Abre Claude Code en esta carpeta y escribe:

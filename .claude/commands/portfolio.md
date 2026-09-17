@@ -8,22 +8,71 @@ allowed-tools: WebFetch, Read, Write, Edit, Glob, Grep, Bash, Skill, AskUserQues
 
 URL del diseño (puede venir vacía): $ARGUMENTS
 
+## Con quién estás hablando
+
+**Es diseñadora, no programadora.** Eso es muy específico, no es lo mismo que
+"no sabe de computadores":
+
+- **Habla diseño sin traducir.** Jerarquía, espaciado, contraste, escala
+  tipográfica, peso, alineación, respiración, grilla — todo eso lo domina mejor
+  que tú. Úsalo con confianza.
+- **Traduce todo lo de código.** Nunca digas *repo*, *build*, *deploy*, *commit*,
+  *dependencias*, *CLI*, *componente*, *bundle*, *branch*, *localhost*.
+  Di "la carpeta del proyecto", "revisar que todo esté bien", "publicar",
+  "guardar los cambios", "los programas que necesita", "la vista previa en tu
+  computador".
+- **Nunca le muestres un error crudo.** Si algo falla, tradúcelo a qué pasó y qué
+  sigue: "no se pudo leer el diseño, el link parece privado — ¿puedes revisar que
+  esté compartido?". Los detalles técnicos te los guardas y los resuelves tú.
+- **No le pidas que decida cosas de código.** Ni framework, ni librerías, ni
+  estructura de archivos. Eso ya está decidido en `AGENTS.md`.
+
 ## Cómo conducir esto
 
-La persona del otro lado **no es técnica**. Condúcela tú.
-
 - **Una sola pregunta a la vez.** Nunca sueltes una lista de preguntas.
-- **Pregunta solo lo que no puedas averiguar tú.** El stack y las convenciones
-  ya están en `AGENTS.md`: no los consultes.
-- **Sin jerga.** Di "la página", no "el bundle"; "se ve bien en celular", no
-  "el breakpoint responsive".
 - **Avanza tú.** Después de cada paso sigue al siguiente sin pedir permiso.
   Párate solo en los checkpoints marcados.
-- **Cuenta qué estás haciendo** en una línea antes de cada paso.
+- **Cuenta qué estás haciendo** en una línea antes de cada paso, para que no se
+  quede mirando una pantalla quieta. "Estoy leyendo tu diseño", "ahora armo la
+  sección de proyectos".
+- **Si algo se demora**, avísale. Instalar los programas la primera vez puede
+  tomar un par de minutos y en la pantalla no pasa nada.
 
 ---
 
-## Paso 0 — Preflight de skills (OBLIGATORIO)
+## Paso 0a — ¿Está listo el computador?
+
+Hazlo tú, en silencio, sin narrarle cada chequeo:
+
+```bash
+node --version && npm --version && git --version
+```
+
+**Si los tres responden**, sigue al Paso 0b sin decir nada.
+
+**Si falta Node**, no le pegues el error. Dile:
+
+> Antes de empezar necesitas instalar Node, que es el programa que arma tu
+> página. Entra a https://nodejs.org y descarga el botón grande que dice **LTS**.
+> Instálalo con "siguiente, siguiente, siguiente" y avísame cuando termine.
+
+Cuando confirme, vuelve a verificar. Si aún falla, pídele que **cierre la
+terminal, abra una nueva** y te avise — el instalador necesita eso para que el
+sistema lo reconozca.
+
+**Si falta git**, en Mac se instala solo con `xcode-select --install`; en Windows
+viene con Node. Guíala igual: una instrucción, esperas, verificas.
+
+**Si no existen las dependencias** (no hay carpeta `node_modules`), instálalas tú:
+
+```bash
+npm install
+```
+
+Avísale que puede tardar un par de minutos y que es normal que no pase nada
+visible en la pantalla.
+
+## Paso 0b — Preflight de skills (OBLIGATORIO)
 
 **La calidad del resultado depende de estas skills. No las saltes.**
 
@@ -227,14 +276,25 @@ Arregla lo que salga. **No sigas con el build roto.**
 
 ## Paso 5 — Que lo vea
 
-Levanta `npm run dev` y dale el link local (`http://localhost:3000`).
+Levanta la vista previa con `npm run dev` y pásale el link.
 
 **Checkpoint — aquí sí párate.**
 
-> Ya está lista, ábrela en http://localhost:3000. ¿Qué te gustaría ajustar antes de publicarla?
+> Ya está armada. Ábrela aquí para verla: http://localhost:3000
+> (es una vista previa en tu computador, todavía no la ve nadie más).
+>
+> Revísala como revisarías cualquier diseño tuyo — espaciados, jerarquía,
+> cómo respira, cómo se ve en el celular. ¿Qué ajustarías?
 
-Aplica los cambios que pida, uno por uno, y vuelve a preguntar hasta que esté
-conforme. **No despliegues sin su visto bueno.**
+Aquí es diseñadora revisando su propio trabajo: **habla su idioma**. Si dice
+"el hero está muy apretado" o "el peso del título compite con el subtítulo",
+eso es preciso — aplícalo, no le pidas que lo traduzca a píxeles.
+
+Si menciona algo que en el diseño original estaba distinto, díselo: puede ser
+que el diseño diga una cosa y ella esté recordando otra.
+
+Aplica los cambios uno por uno y vuelve a preguntar hasta que esté conforme.
+**No publiques sin su visto bueno.**
 
 Cada ajuste que pida a mano (algo que **no** viene del diseño) anótalo en
 `manualEdits` de `.portfolio/design.json`:
